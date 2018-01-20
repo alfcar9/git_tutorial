@@ -1,0 +1,65 @@
+
+Los sockets para mandar un mensaje tienen que tener direccion IP y un puerto, como en SOA. Los sockets son la interfaz para l comunicacion.
+sockets: hay sin conexión o con conexion. Esto es con TCP o UDP. 
+Hay un tutorial de como utilizar RMI (invocacion remota de metodos), ejecutar un proceso que esta en otra maquina o invocar metodos que estan en otra maquina.
+Para la siguiente clase tener eso corriendo en nuestras maquinas usando el tutorial. 
+Arriba de eso tendremos que etener un sistema de publicacion y subscripcion. 
+
+Los primeros 4 libros para la primera parte del curso. El mas recomendadoes el de kshemkalyani.
+El 5to es para base de datos.
+El de nancy es un clasico, teorico. 
+
+Distribuited System
+Collection of autonomous processors which can communicate with each other and which cooperate on a common goal. Son procedadores autonomos que se comunican a traves de mensajes para tener un objtetivo comun. Quiero hacer consultas con datos y algunos estan locales y otros remotos. Ahi tendriamos una base de datos distribuida. El usuario no debe percatarse de que esta distribuida. Un conjunto de ruteadores que son 1) autonomos, 2) heterogeniedad (por ejemplo no todos trabajan con xisco). OSI se uso para trabajar con maquinas de distintas marcas. 3) separadas geograficamente, 4) no usaran reloj comun,  y tampoco 5) memoria comun, todo es a traves de mensajes. Quieres distribuir para ser tolerante a fallas y tambien para ser escalable (potencia), si hay mas maquinas tengo mas usuarios. 
+
+Niklaus Wirth
+ALGORITHMS + DATA STRUCTURES = PROGRAM (programas todos igual).
+Un algoritmo para intercambiar mensajes y saber cual son las mejores rutas. Data structures (guardan el estado del algoritimo).
+
+Procesos asincronos (no tienen reloj comun con las 5 caracteristicas mencionadas, y supondremos que cada procesar corre un solo proceso. Uno de los grandes problemas de los sistemas distribuidos es que no podemos saber que paso antes que otra cosa. Lamport trabajo con este problema y encontro un sistema que te dice que paso inmediatamente antes y de ahi puedes inferir cosas. 
+
+Trabajaremos con algortimos de control.
+Como detecto deadlocks (bloqueo de procesos), el algoritmo controla que las transacciones sean consistentes.
+
+En la vida real siempre hay fallas. Hay distintos tipos de fallas. En cada algoritmo hay que definirlo, como crash (se cayo y ya no hace nada, ya no llegan mensajes), o fallas bizantinas o malicisiosas (llegan mensajes maliciosos para confundir). Nos interesa saber que tan tolerante es.
+
+Los relojes fisicos. Supondremos que no hay relojes. 
+
+PRESENTACIONES: Dar contexto de quien es el autor. 
+
+Cada algoritmo supone hipotesis para trabajar. Son importantes para poder compararse así como la complejidad de cada uno. Por ejemplo numero y tamaño de mensajes. 
+
+El primer problema que vmos a ver es el de exclusividad mutua en sistemas distribuidos centralizados.
+Como le hacemos para que solo un proceso pueda tener acceso a un recurso restringido. Como hacerlo en un sistema distribuido. 
+Por ejemplo en una base de datos, dos usuarios quieren leer los datos. Una transaccion de banco, hay un proceso que te gustaria que no se interrumpiera. Como, con candado para la base de datos, para que solo yo tenga acceso a tu cuenta y luego quito los candados. Así los procesos no interfieren entre si. Hay como 4 articulos de esto. 
+
+Requerimientos de los algoritmos:
+Seguridad: no pasa algo malo, por ejemplo que dos procesos no entran en una ruta o seccion critica. No hay dos veces semaforos verde. 
+Vivacidad: algo bueno pasara eventualmente pasa. Por ejemplo podrías decir que siempre estan rojos, entonces si alternan entonces sí habria vivacidad.
+Justicia: que todos los procesos avancen. 
+
+DATOS DISTRIBUIDOS	
+Dos puntos de vista:
+1. Los datos estan particionados.
+2. Replico los datos.
+
+Consistente: la transaccion se hizo bien.
+Aislamiento: que transacciones concurrentes se pueden ver una a una.
+Durablidad: que la transaccion se queda ahi para siempre.
+
+papers que te tocan:
+5 bit turrent.  contestar que es, porque funciona, explica que es peer to peer y cuales son los incentivos para querer cooperar. es dificil poder encontrar las cosas y eso da pie al paper de saul. Pa la siguiente clase chavo. Presentacion de 20 minutos. 
+
+2DA PRESENTACION ALGORITMOS Y TOPOLOGIAS.
+
+En una red 802 local hay todo lo siguiente (TOKEN RING). 
+Multiple access protocols.
+Cada quien tiene una direccion mac de 48 bits. 
+ALOHA Protocolo para transmitir, retransmiten si hay colisión.
+CSMA / CD Transmiten si el medio esta libre y detecto colisiones, si dos entraron pues al mismo tiempo y pensaban que estaba libre.como hacerle, esperan un tiempo aleatorio y retransmiten.
+Collision-free token; usando un token para evitar colisiones, esto se usaba para transmitir.
+
+TOKEN RING
+Esta el medio fisico, puede ser el aire, o usando la linea telefonica. El data link tiene la direccion mac que evita las colisiones, cada tarjeta de red tiene una direccion mac. esta capa permite que se pueda compartir la red sin que las maquinas colisionen. El network tiene la direccion IP que perimite mandar mensajes al mundo. Luego se uso un par trenzado, y el mensaje de 24-bits esta dando vueltas en el anillo. A nivel de IP son paquetes. En otro nivel se llaman tramas. El paquete IP tiene el destino y tiene un paquete TCP y este puede tener un subpaquete de http y así andidados. El mecanismo es quieres enviar un token, abres el anillo y tomas un token, cuando regresa el mensaje quiere decir que paso por todos los nodos y entonces sacas el mensaje y vuelves a poner el token. Esto del anillo es en el caso de exclusion mutua y por eso hay un solo token. El mensajito trae la direccion MAC de C y la direccion de A. Uno de los nodos es tambien un ruteador que permite para mandarlo al mundo, que tiene su subdireccion IP. El ruteador sabe a que direccion IP corresponde una direccion MAC. Repito en este contexto es exclusion mutua con acceso al medio. Fairness dice que no puedes reenviar mensajes. El token pasa automaticamente al que sigue. El token es unidireccional, va digamos en el sentido de las manecillas del reloj. Un nodo se especializa en que el mensaje quepa que se llama monitor. Deadlock: una maquina que tenia el token se cae. El monitor detecta deadlocks, se le llama lider, si se cae el monitor cambiamos de lider. La replicacion pasiva permite tolerar fallas. Hasta que no se da cuenta que se cae el otro entonces se emite un claim token y si regresa es que no hay lider y entonces se proclama lider o monitor.    
+
+Hay otros algoritmos que no estan basados en la direccion MAC, que son anonimos. Transmitir o no transmitir es aleatorio. Es uniforme y auto estabilizante. Token Ring ya no se usa. Ethernet antes era así mediante un cable coaxial. Ahora ya no hay un cable, ahora hay un par trensado o una fibra optica que a nivel de capa 1 (hub) o 2 (switch) replican la señal, almacena la direccion mac y lo manda y si no lo guarda en una cola, evita colisiones. Así funcionan hoy en dia, con switches los mensajes. El switch ve la direccion mac y decide sobre que puerto mandarlo. Los switches comunican una red con otra red y ven el encabezado para ver a donde lo van a mandar.  
